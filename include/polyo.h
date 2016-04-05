@@ -27,7 +27,8 @@ class polyo
         unsigned int getArea(){return _area;}
         void cross();
         bitmap_image toBitmap();
-        std::vector<cell> treeLiberties();
+        std::vector<cell> inscribedTreeLiberties();
+        std::vector<cell> treeLiberties(int n);
 
      private:
         std::vector<std::vector<cell>> _cells;

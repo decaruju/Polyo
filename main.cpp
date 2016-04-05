@@ -8,7 +8,7 @@ int counter(0);
 
 int main()
 {
-    countOnly(15,3,10,counter,border(""));
+    generateInscribedTreeToArea(-1,6,6,polyo(),counter,vector<vector<bool>>(),17);
     cout<<counter<<endl;
     return 0;
 }

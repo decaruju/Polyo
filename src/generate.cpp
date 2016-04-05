@@ -143,7 +143,7 @@ void generateTree(int i, int h, int v, polyo pol, int& counter, vector<vector<bo
         return;
     }
 
-    vector<cell> liberties(pol.treeLiberties());
+    vector<cell> liberties(pol.inscribedTreeLiberties());
 
     for (int k(0); k<liberties.size(); k++)
     {
@@ -162,7 +162,7 @@ void generateTree(int i, int h, int v, polyo pol, int& counter, vector<vector<bo
     }
 
 }
-void generateTreeToArea(int i, int h, int v, polyo pol, int& counter, vector<vector<bool>> canGrow,int n)
+void generateInscribedTreeToArea(int i, int h, int v, polyo pol, int& counter, vector<vector<bool>> canGrow,int n)
 {
     if (i==-1)
     {
@@ -175,14 +175,19 @@ void generateTreeToArea(int i, int h, int v, polyo pol, int& counter, vector<vec
             }
             polyo tempPol(h,v);
             tempPol.addCell(cell(k,0));
-            generateTreeToArea(0,h,v,tempPol,counter,canGrow,n);
+            generateInscribedTreeToArea(0,h,v,tempPol,counter,canGrow,n);
         }
         return;
     }
     if (pol.getArea() > n)
         return;
-    vector<cell> liberties(pol.treeLiberties());
-
+    vector<cell> liberties(pol.inscribedTreeLiberties());
+    if (pol.isInscribed() && pol.getArea() == n)
+    {
+        cout<<pol.toString()<<endl;
+        counter++;
+        return;
+    }
     for (int k(0); k<liberties.size(); k++)
     {
         if (canGrow[liberties[k].getHPosition()][liberties[k].getVPosition()])
@@ -190,13 +195,44 @@ void generateTreeToArea(int i, int h, int v, polyo pol, int& counter, vector<vec
             polyo tempPol(pol);
             canGrow[liberties[k].getHPosition()][liberties[k].getVPosition()] = false;
             tempPol.addCell(liberties[k]);
-            generateTreeToArea(i,h,v,tempPol,counter,canGrow,n);
+            generateInscribedTreeToArea(i,h,v,tempPol,counter,canGrow,n);
         }
     }
-    if (pol.isInscribed() && pol.getArea() == n)
+
+}
+void generateTreeToArea(int i, polyo pol, int& counter, vector<vector<bool>> canGrow,int n)
+{
+    if (i==-1)
+    {
+        pol = polyo(2*n+2,2*n+2);
+        canGrow = vector<vector<bool>>(2*n+2,vector<bool>(2*n+2,true));
+        pol.addCell(cell(n,n));
+        canGrow[n][n] = false;
+        generateTreeToArea(0,pol,counter,canGrow,n);
+        return;
+    }
+    if (pol.getArea() == n)
     {
         cout<<pol.toString()<<endl;
         counter++;
+        return;
+    }
+    vector<cell> liberties(pol.treeLiberties(n));
+    for (int k(0); k<liberties.size(); k++)
+    {
+        if (canGrow[liberties[k].getHPosition()][liberties[k].getVPosition()])
+        {
+            polyo tempPol(pol);
+            canGrow[liberties[k].getHPosition()][liberties[k].getVPosition()] = false;
+            tempPol.addCell(liberties[k]);
+            generateTreeToArea(i,tempPol,counter,canGrow,n);
+        }
+    }
+    if (pol.getArea() == n)
+    {
+        cout<<pol.toString()<<endl;
+        counter++;
+        return;
     }
 }
 void generateInscribedSnake(int i, int j, int h, int v, polyo pol, int& counter, bool toArea, unsigned int n)

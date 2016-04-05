@@ -11,6 +11,7 @@ void generateNoConstraint(int i, int j, int h, int v, polyo pol, int&);
 void generateTree(int i, int h, int v, polyo pol, int& counter, std::vector<std::vector<bool>> noGrow);
 void generateInscribedSnake(int i, int j, int h, int v, polyo pol, int&, bool, unsigned int);
 void generateSnake(int i, int j, polyo pol, int& counter, unsigned int n);
-void generateTreeToArea(int i, int h, int v, polyo pol, int& counter, std::vector<std::vector<bool>> canGrow, int n);
+void generateInscribedTreeToArea(int i, int h, int v, polyo pol, int& counter, std::vector<std::vector<bool>> canGrow, int n);
+void generateTreeToArea(int i, polyo pol, int& counter, std::vector<std::vector<bool>> canGrow,int n);
 void countOnly(int n, int h, int v, int& counter, border b, int i = -1, int j=0, int m =0);
 #endif // GENERATE_H

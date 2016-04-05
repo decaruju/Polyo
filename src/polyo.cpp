@@ -256,7 +256,7 @@ void polyo::cross()
     _nonEmpty = tempNonEmpty;
     _size = tempSize;
 }
-vector<cell> polyo::treeLiberties()
+vector<cell> polyo::inscribedTreeLiberties()
 {
     vector<cell> rtn(0);
     for (unsigned int i(0); i<_size[0]; i++)
@@ -273,6 +273,30 @@ vector<cell> polyo::treeLiberties()
             if (j > 0 && _nonEmpty[i][j-1])
                 degree++;
             if(degree == 1&& !_nonEmpty[i][j])
+            {
+                rtn.push_back(cell(i,j));
+            }
+        }
+    }
+    return rtn;
+}
+vector<cell> polyo::treeLiberties(int n)
+{
+    vector<cell> rtn(0);
+    for (unsigned int i(0); i<_size[0]; i++)
+    {
+        for (unsigned int j(0); j<_size[1]; j++)
+        {
+            unsigned int degree = 0;
+            if (i < _size[0]-1 && _nonEmpty[i+1][j])
+                degree++;
+            if (i > 0 && _nonEmpty[i-1][j])
+                degree++;
+            if (j < _size[1]-1 && _nonEmpty[i][j+1])
+                degree++;
+            if (j > 0 && _nonEmpty[i][j-1])
+                degree++;
+            if(degree == 1&& !_nonEmpty[i][j] && (i>n||(i == n && j+1 > n)))
             {
                 rtn.push_back(cell(i,j));
             }
