@@ -7,6 +7,7 @@ using namespace std;
 polyo::polyo(const unsigned int h, const unsigned int v)
 {
     _cells = vector<vector<cell>>(h,vector<cell>(v));
+    _cellVector = vector<cell>();
     _nonEmpty = vector<vector<bool>>(h,vector<bool>(v,false));
     _size[0] = h;
     _size[1] = v;
@@ -34,6 +35,7 @@ void polyo::addCell(cell cellToAdd)
             _cells[h][v] = cellToAdd;
 
         _nonEmpty[h][v] = true;
+        _cellVector.push_back(cell(h,v));
     }
     _area++;
 }
@@ -192,31 +194,6 @@ bool polyo::isInscribed()
     temprtn = false;
     return rtn;
 }
-bool polyo::isTree()
-{
-    bool rtn(true);
-    for (unsigned int i(0); i< _size[0]; i++)
-    {
-        for (unsigned int j(0); j<_size[1];  j++)
-        {
-            if (_nonEmpty[i][j])
-            {
-                cell cellToVisit;
-                vector<vector<bool>> visited = vector<vector<bool>>(_size[0],vector<bool>(_size[1],false));
-                vector<cell> toVisit = {_cells[i][j]};
-                while (toVisit.size()>0)
-                {
-                    cellToVisit = toVisit.back();
-                    toVisit.pop_back();
-                    visited[cellToVisit.getHPosition()][cellToVisit.getVPosition()] = true;
-                    this->findNeighbors(visited, cellToVisit , toVisit);
-                }
-                break;
-            }
-        }
-    }
-    return rtn;
-}
 
 bool polyo::hasCell(unsigned int i, unsigned int j)
 {
@@ -256,49 +233,47 @@ void polyo::cross()
     _nonEmpty = tempNonEmpty;
     _size = tempSize;
 }
-vector<cell> polyo::inscribedTreeLiberties()
+
+vector<cell> polyo::liberties(bool tree, bool inscribed)
 {
     vector<cell> rtn(0);
-    for (unsigned int i(0); i<_size[0]; i++)
+    unsigned int degree;
+    for (unsigned int i = 0; i< _size[0]; i++)
     {
-        for (unsigned int j(0); j<_size[1]; j++)
+        for (unsigned int j = 0; j < _size[1]; j++)
         {
-            unsigned int degree = 0;
-            if (i < _size[0]-1 && _nonEmpty[i+1][j])
+            degree = 0;
+            if (i<_size[0]-1 && _nonEmpty[i+1][j])
                 degree++;
-            if (i > 0 && _nonEmpty[i-1][j])
+            if (i>0 && _nonEmpty[i-1][j])
                 degree++;
-            if (j < _size[1]-1 && _nonEmpty[i][j+1])
+            if (j<_size[1]-1 && _nonEmpty[i][j+1])
                 degree++;
-            if (j > 0 && _nonEmpty[i][j-1])
+            if (j>0 && _nonEmpty[i][j-1])
                 degree++;
-            if(degree == 1&& !_nonEmpty[i][j])
+
+            if (!inscribed)
             {
-                rtn.push_back(cell(i,j));
+                if (j>0 || (j==0 && i>_size[1]))
+                {
+                    if (tree)
+                    {
+                        if (degree == 1)
+                            rtn.push_back(cell(i,j));
+                    }
+                    else if (degree > 0 )
+                        rtn.push_back(cell(i,j));
+                }
             }
-        }
-    }
-    return rtn;
-}
-vector<cell> polyo::treeLiberties(int n)
-{
-    vector<cell> rtn(0);
-    for (unsigned int i(0); i<_size[0]; i++)
-    {
-        for (unsigned int j(0); j<_size[1]; j++)
-        {
-            unsigned int degree = 0;
-            if (i < _size[0]-1 && _nonEmpty[i+1][j])
-                degree++;
-            if (i > 0 && _nonEmpty[i-1][j])
-                degree++;
-            if (j < _size[1]-1 && _nonEmpty[i][j+1])
-                degree++;
-            if (j > 0 && _nonEmpty[i][j-1])
-                degree++;
-            if(degree == 1&& !_nonEmpty[i][j] && (i>n||(i == n && j+1 > n)))
+            else
             {
-                rtn.push_back(cell(i,j));
+                if (tree)
+                {
+                    if (degree == 1)
+                        rtn.push_back(cell(i,j));
+                }
+                else if (degree > 0)
+                    rtn.push_back(cell(i,j));
             }
         }
     }

@@ -11,6 +11,7 @@ class cell
     public:
         cell();
         cell(unsigned int h, unsigned int v);
+        cell(const cell& other){_position = other._position; _degree = other._degree;}
         unsigned int getHPosition() {return _position[0];}
         unsigned int getVPosition() {return _position[1];}
         void setDegree(polyo polyo);

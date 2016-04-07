@@ -8,7 +8,7 @@ int counter(0);
 
 int main()
 {
-    generateInscribedTreeToArea(-1,6,6,polyo(),counter,vector<vector<bool>>(),17);
+    growGenerate(polyo(),counter,vector<vector<bool>>(),false,false,true,50);
     cout<<counter<<endl;
     return 0;
 }
