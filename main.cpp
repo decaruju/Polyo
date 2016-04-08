@@ -8,7 +8,7 @@ int counter(0);
 
 int main()
 {
-    growGenerate(polyo(),counter,vector<vector<bool>>(),false,false,true,50);
+    generateSnake(polyo(),counter,false,true,0,5,10);
     cout<<counter<<endl;
     return 0;
 }

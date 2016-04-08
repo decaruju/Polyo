@@ -208,113 +208,96 @@ void growGenerate(polyo pol, int& counter, vector<vector<bool>> canGrow, bool tr
     }
 }
 
-void generateInscribedSnake(int i, int j, int h, int v, polyo pol, int& counter, bool toArea, unsigned int n)
+void generateSnake (polyo pol, int& counter, bool toArea, bool inscribed, int n, int h, int v, int i, int j, int k, int l)
 {
-    if (i==-1)
+    if (pol.getArea() == 0)
     {
-        pol = polyo(h,v);
-        for (unsigned int k(0); k<h; k++)
+        if (inscribed)
         {
-            for (unsigned int l(0); l<v; l++)
+            if (!toArea)
+                n = h*v;
+            pol = polyo(h,v);
+            counter = 0;
+            for (int a = 0 ; a<h; a++)
             {
-                polyo tempPol(pol);
-                tempPol.addCell(cell(k,l));
-                generateInscribedSnake(k,l,h,v,tempPol,counter,toArea,n);
-                cout<<k<<endl;
-                cout<<l<<endl;
+                for (int b = 0 ; b < v; b++)
+                {
+                    polyo tempPol(pol);
+                    tempPol.addCell(cell(a,b));
+                    generateSnake(tempPol,counter,toArea,inscribed,n,h,v,a,b,a,b);
+                }
             }
+        }
+        else if (toArea)
+        {
+            h = 2*n+2;
+            v = 2*n+2;
+            pol = polyo(h,v);
+            counter = 0;
+            pol.addCell(cell(n,n));
+            generateSnake(pol,counter,toArea,inscribed,n,h,v,n,n,n,n);
         }
         return;
     }
-    if (toArea&&pol.getArea()>n)
+    if (toArea)
     {
-        return;
-    }
-    if (pol.isInscribed())
-    {
-        if (toArea)
+        if (pol.getArea() == n && (j<l|| (j==l && i<k)))
         {
-            if(pol.getArea() == n)
+            if (inscribed)
+            {
+                if (pol.isInscribed())
+                {
+                    cout<<pol.toString()<<endl;
+                    counter++;
+                    return;
+                }
+            }
+            else if ((i<k|| (i==k && j<l)))
             {
                 cout<<pol.toString()<<endl;
                 counter++;
+                return;
+            }
+        }
+        if (pol.getArea() == n)
+            return;
+    }
+    else
+    {
+        if (inscribed)
+        {
+            if (pol.isInscribed() && (i<k|| (i==k && j<l)))
+            {
+                cout<<pol.toString()<<endl;
+                counter++;
+                return;
             }
         }
         else
-        {
-            cout<<pol.toString()<<endl;
-            counter++;
-        }
-
+            return;
     }
     if (i<h-1 && !pol.hasCell(i+1,j) && !pol.hasCell(i+2,j) && !pol.hasCell(i+1,j+1) && !pol.hasCell(i+1,j-1))
     {
         polyo tempPol(pol);
         tempPol.addCell(cell(i+1,j));
-        generateInscribedSnake(i+1,j,h,v,tempPol,counter,toArea,n);
+        generateSnake(tempPol,counter,toArea,inscribed,n,h,v,i+1,j,k,l);
     }
     if (i>0 && !pol.hasCell(i-1,j) && !pol.hasCell(i-2,j) && !pol.hasCell(i-1,j+1) && !pol.hasCell(i-1,j-1))
     {
         polyo tempPol(pol);
         tempPol.addCell(cell(i-1,j));
-        generateInscribedSnake(i-1,j,h,v,tempPol,counter,toArea,n);
+        generateSnake(tempPol,counter,toArea,inscribed,n,h,v,i-1,j,k,l);
     }
     if (j<v-1 && !pol.hasCell(i,j+1) && !pol.hasCell(i,j+2) && !pol.hasCell(i+1,j+1) && !pol.hasCell(i-1,j+1))
     {
         polyo tempPol(pol);
         tempPol.addCell(cell(i,j+1));
-        generateInscribedSnake(i,j+1,h,v,tempPol,counter,toArea,n);
+        generateSnake(tempPol,counter,toArea,inscribed,n,h,v,i,j+1,k,l);
     }
     if (j>0 && !pol.hasCell(i,j-1) && !pol.hasCell(i,j-2) && !pol.hasCell(i+1,j-1) && !pol.hasCell(i-1,j-1))
     {
         polyo tempPol(pol);
         tempPol.addCell(cell(i,j-1));
-        generateInscribedSnake(i,j-1,h,v,tempPol,counter,toArea,n);
+        generateSnake(tempPol,counter,toArea,inscribed,n,h,v,i,j-1,k,l);
     }
-
 }
-
-void generateSnake(int i, int j, polyo pol, int& counter, unsigned int n)
-{
-    if (i==-1)
-    {
-                polyo tempPol(2*n+2,2*n+2);
-                tempPol.addCell(cell(n,n));
-                generateSnake(n,n,tempPol,counter,n);
-                return;
-    }
-
-    if(pol.getArea() == n)
-    {
-        cout<<pol.toString()<<endl;
-        counter++;
-        return;
-    }
-
-    if (!pol.hasCell(i+1,j) && !pol.hasCell(i+2,j) && !pol.hasCell(i+1,j+1) && !pol.hasCell(i+1,j-1))
-    {
-        polyo tempPol(pol);
-        tempPol.addCell(cell(i+1,j));
-        generateSnake(i+1,j,tempPol,counter,n);
-    }
-    if (!pol.hasCell(i-1,j) && !pol.hasCell(i-2,j) && !pol.hasCell(i-1,j+1) && !pol.hasCell(i-1,j-1))
-    {
-        polyo tempPol(pol);
-        tempPol.addCell(cell(i-1,j));
-        generateSnake(i-1,j,tempPol,counter,n);
-    }
-    if (!pol.hasCell(i,j+1) && !pol.hasCell(i,j+2) && !pol.hasCell(i+1,j+1) && !pol.hasCell(i-1,j+1))
-    {
-        polyo tempPol(pol);
-        tempPol.addCell(cell(i,j+1));
-        generateSnake(i,j+1,tempPol,counter,n);
-    }
-    if (!pol.hasCell(i,j-1) && !pol.hasCell(i,j-2) && !pol.hasCell(i+1,j-1) && !pol.hasCell(i-1,j-1))
-    {
-        polyo tempPol(pol);
-        tempPol.addCell(cell(i,j-1));
-        generateSnake(i,j-1,tempPol,counter,n);
-    }
-
-}
-

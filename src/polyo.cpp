@@ -197,7 +197,7 @@ bool polyo::isInscribed()
 
 bool polyo::hasCell(unsigned int i, unsigned int j)
 {
-    if (i<_size[0] && j<_size[1])
+    if (i<_size[0] && j<_size[1] && i>=0 && j>=0)
         return _nonEmpty[i][j];
     return false;
 }
